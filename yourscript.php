@@ -49,23 +49,26 @@ while(!feof($myfile)) {
 }
 fclose($myfile);
 
+echo $_GET["Issue"] . "<br>";
+
 //echo "A = " . $A . "<br>";
 
-$myprofile = fopen($_GET["name"] . " Profile.txt", "w+") or die("Unable to open file!");
+//Creates/(adds to) a user's profile.txt 
+$myprofile = fopen($_GET["name"] . " Profile.txt", "a+") or die("Unable to open file!");
 if ($A==15){
-	$Stance = "You have an extremely positive Stance to issue A";
+	$Stance = "You have an extremely positive Stance to issue " . $_GET["Issue"];
 } else if ($A>=10){
-	$Stance = "You have a very positive Stance to issue A";
+	$Stance = "You have a very positive Stance to issue " . $_GET["Issue"];
 } else if ($A>=5){
-	$Stance = "You have a positive Stance to issue A";
+	$Stance = "You have a positive Stance to issue " . $_GET["Issue"];
 } else if ($A>=-4){
-	$Stance = "You have a neutral Stance to issue A";
+	$Stance = "You have a neutral Stance to issue " . $_GET["Issue"];
 } else if ($A>=-9){
-	$Stance = "You have a negative Stance to issue A";
+	$Stance = "You have a negative Stance to issue " . $_GET["Issue"];
 } else if ($A>=-14){
-	$Stance = "You have a very negative Stance to issue A";
+	$Stance = "You have a very negative Stance to issue " . $_GET["Issue"];
 } else {
-	$Stance = "You have an extremely negative Stance to issue A";
+	$Stance = "You have an extremely negative Stance to issue " . $_GET["Issue"];
 }
 
 fwrite($myprofile, $Stance);
