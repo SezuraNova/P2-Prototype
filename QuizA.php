@@ -34,13 +34,10 @@
 </section>
 
 	Welcome <?php echo $_GET["name"]; ?> <br>
-<!-- Your email address is: <?php echo $_GET["email"]; ?> <br>
--->
-
 
 <form action="yourscript.php" method="get">
 
-       	<input type="hidden" name="name" value = <?php$_GET["name"]?>>
+       	<input type="hidden" name="name" value = "<?php echo $_GET["name"]; ?>" >
         <!-- E-mail: <input type="text" name="email"><br> -->
 
         <input type="hidden" name= "Issue" value = "A">

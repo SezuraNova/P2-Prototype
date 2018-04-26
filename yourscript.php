@@ -1,3 +1,17 @@
+<?php
+if (isset($_POST['QuizA']) || isset($_POST['QuizB'])) {
+    // handle textarea
+
+    if (isset($_POST['QuizA'])) {
+        header('Location: /QuizA.php');
+        exit();
+    }
+
+    header('Location: /QuizB.php');
+    exit();
+}
+?>
+
 <html lang="en"> 
 <head>
 
@@ -33,12 +47,15 @@
 		</div>
 	</section>
 
+	<h3>
 	Welcome <?php echo $_GET["name"]; ?> <br>
+	</h3>
 <!-- Your email address is: <?php echo $_GET["email"]; ?> <br>
 -->
 
 <?php
 //Writing answers to text file
+
 
 $profileName = $_GET["name"];
 if(strcmp($_GET["Issue"], "ProfileName")==0){
@@ -145,28 +162,19 @@ function AddToProfile($File){
 
 ?>
 
-<?php
-
-if (isset($_POST['QuizA']) || isset($_POST['QuizB'])) {
-    // handle textarea
-
-    if (isset($_POST['QuizA'])) {
-        header('Location: /QuizA.php');
-        exit();
-    }
-
-    header('Location: /QuizB.php');
-    exit();
-}
-
-?>
-
-<form>
-  <fieldset>
-<!--   	<input type="hidden" name="name" value = <?php$_GET["name"]?>> -->
+<form action="QuizA.php" method="get" >
+  	<input type="hidden" name="name" value = "<?php echo $_GET["name"]; ?>">
     <input type="submit" name="QuizA" value="Quiz A">
+</form>
+
+<form action="QuizB.php" method="get" >
+  	<input type="hidden" name="name" value = "<?php echo $_GET["name"]; ?>">
     <input type="submit" name="QuizB" value="Quiz B">
-  </fieldset>
+</form>
+
+<form action="QuizC.php" method="get" >
+  	<input type="hidden" name="name" value = "<?php echo $_GET["name"]; ?>">
+    <input type="submit" name="QuizC" value="Quiz C">
 </form>
 
 
