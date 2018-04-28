@@ -44,9 +44,10 @@
 
 $profilecheck = ($_GET["name"] . " Profile.txt");
 $profileName = $_GET["name"];
-if(!file_exists($profilecheck)){
+
 	if(strcmp($_GET["Issue"], "ProfileName")==0){
-		$myprofile = fopen($_GET["name"] . " Profile.txt", "w+") or die("Unable to open file!");
+		if(!file_exists($profilecheck))
+			$myprofile = fopen($_GET["name"] . " Profile.txt", "w+") or die("Unable to open file!");
 	} 
 	else {
 
@@ -111,7 +112,7 @@ if(!file_exists($profilecheck)){
 			$myprofile = fopen($profilecheck, "a+") or die("Unable to open file!");
 			while(!feof($myprofile)) {
 				$IssueCheck = fgets($myprofile);
-				if (strcmp($IssueCheck, $_GET["Issue"] . "\n")==0) {
+				if (strcmp($IssueCheck, $_GET["Issue"] . " \n")==0) {
 					$IssueDone = true;
 				}
 			}
@@ -125,7 +126,7 @@ if(!file_exists($profilecheck)){
 			$myprofile = fopen($profilecheck, "w+") or die("Unable to open file!");
 			AddToProfile($myprofile);
 		}
-		echo "<br>" . file_get_contents($_GET["name"] . " Profile.txt") . "<br>";
+		//echo "<br>" . file_get_contents($_GET["name"] . " Profile.txt") . "<br>";
 	}
 
 	function AddToProfile($File){
@@ -146,10 +147,10 @@ if(!file_exists($profilecheck)){
 			$Stance = "You have an extremely negative Stance to issue " . $_GET["Issue"];
 		}
 		echo "<br>" . $Stance . "<br>";
-		fwrite($File, $_GET["Issue"] . "\n" . $Score . "\n");
+		fwrite($File, $_GET["Issue"] . " \n" . $Score . " \n|");
 		fclose($File);
 	}
-}
+
 
 ?>
 
@@ -172,6 +173,49 @@ if(!file_exists($profilecheck)){
 
 </section>
 
+<canvas id="myChart" width="400" height="400"></canvas>
+<script src="node_modules/chart.js/dist/Chart.js"> </script>
+<script>
+	
+var ctx = document.getElementById("myChart").getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["A", "B", "C"],
+        datasets: [{
+            label: 'Position',
+            data: [-12, 0, 3],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:false
+                }
+            }]
+        }
+    }
+});
+</script>
+
 
 
 </body>
@@ -180,6 +224,6 @@ if(!file_exists($profilecheck)){
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
-<script src="scripts/script.js"></script>
+
 </body>
 </html>
