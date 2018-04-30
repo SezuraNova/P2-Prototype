@@ -104,29 +104,32 @@
 				}   
 			}
 			fclose($myfile);
-		//Creates/(adds to) a user's profile.txt 
+		
 
+		//Creates/(adds to) a user's profile.txt 
 			$IssueDone = false;
 			if (file_exists($profilecheck)){
-		  // echo "<br>THIS FILE EXISTS<br><br>";
 				$myprofile = fopen($profilecheck, "a+") or die("Unable to open file!");
 				while(!feof($myprofile)) {
-					$IssueCheck = fgets($myprofile);
-					if (strcmp($IssueCheck, $_GET["Issue"] . " ")==0) {
+					$IssueCheck = fgetc($myprofile);
+					if (strcmp($IssueCheck, $_GET["Issue"] )==0) {
 						$IssueDone = true;
+						echo ("True");
 					}
 				}
 				if ($IssueDone){
-		    // echo "<br>" . $_GET["Issue"] . " " . $IssueDone ? 'true' : 'false' . "<br>";
+					echo ("True and I did nothing"); 
+					//do nothing if Issue already answered
 				} else {
+					echo ("False and I did something");
 					AddToProfile($myprofile);
 				}
 			}
 			else {
+				echo ("File exists false");
 				$myprofile = fopen($profilecheck, "w+") or die("Unable to open file!");
 				AddToProfile($myprofile);
 			}
-		//echo "<br>" . file_get_contents($_GET["name"] . " Profile.txt") . "<br>";
 		}
 
 		function AddToProfile($File){
@@ -178,12 +181,12 @@
 			<h4>Look at profile with AJAX</h4>
 			<button type="button" onclick="loadDoc()">Change Content</button>
 		</div>
-
-
-
+		
+		<script src="node_modules/chart.js/dist/Chart.bundle.js"> </script>
 		<canvas id="myChart" width="400" height="400"></canvas>
-		<script src="node_modules/chart.js/dist/Chart.js"> </script>
 		<script>
+
+
 			function loadDoc() {
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function() {
@@ -195,13 +198,77 @@
 				xhttp.send();
 			}
 
-			function GetProfileData () {
+			// function addData(chart, label, data) {
+			//     // chart.data.labels.push(label);
+			//     chart.data.datasets.forEach((dataset) => {
+			//     	console.log(data);
+			//         dataset.data.push(data);
+			//     });
+			//     // console.log(dataset.data);
+			//     chart.update();
+			// }
+			
+			function addData(){
+					xhttp.onreadystatechange = function(chart) {
+						if (this.readyState == 4 && this.status == 200) {
+							console.log("I MADE IT HERE");
+							var newDataset = {
+						        label: "random",
+						        backgroundColor: bGroundColor[counter],
+						        borderColor: borColor[counter],
+						        borderWidth: 1,
+						        data: [A, B, C],
+						    }
+						    chart.data.datasets.push(newDataset);
+						    chart.update();
+						    counter ++;
+							}
+						};
+					xhttp2.open("POST", matchRuleShort("Profile.txt", "*profile*"), true);
+					xhttp2.send();
+			}
 
+			function matchRuleShort(str, rule) {
+			  return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
+			}
+
+			//Explanation code
+			function matchRuleExpl(str, rule) {
+			  // "."  => Find a single character, except newline or line terminator
+			  // ".*" => Matches any string that contains zero or more characters
+			  rule = rule.split("*").join(".*");
+
+			  // "^"  => Matches any string with the following at the beginning of it
+			  // "$"  => Matches any string with that in front at the end of it
+			  rule = "^" + rule + "$"
+
+			  //Create a regular expression object for matching string
+			  var regex = new RegExp(rule);
+
+			  //Returns true if it finds a match, otherwise it returns false
+			  return regex.test(str);
 			}
 
 			var ctx = document.getElementById("myChart").getContext('2d');
 			var xhttp = new XMLHttpRequest();
+			//var myChart = new Chart(ctx);
 			var A, B, C;
+			var bGroundColor = [
+								'rgba(255, 99, 132, 0.2)',
+								'rgba(54, 162, 235, 0.2)',
+								'rgba(255, 206, 86, 0.2)',
+								'rgba(75, 192, 192, 0.2)',
+								'rgba(153, 102, 255, 0.2)',
+								'rgba(255, 159, 64, 0.2)'
+								];
+			var borColor =[
+								'rgba(255,99,132,1)',
+								'rgba(54, 162, 235, 1)',
+								'rgba(255, 206, 86, 1)',
+								'rgba(75, 192, 192, 1)',
+								'rgba(153, 102, 255, 1)',
+								'rgba(255, 159, 64, 1)'
+								];
 			xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
 					profileDat = this.responseText;
@@ -209,39 +276,22 @@
 					ready = true;
 					if (profileDat.search("A")!= -1){
 						A = profileDat.substring((profileDat.search("A") + 2),(profileDat.search("A") + 5));
-						console.log(A);
 					}						
 					if (profileDat.search("B")!= -1){
 						B = profileDat.substring((profileDat.search("B") + 2),(profileDat.search("B") + 5));
-						console.log(B);
 					}						
 					if (profileDat.search("C")!= -1){
 						C = profileDat.substring((profileDat.search("C") + 2),(profileDat.search("C") + 5));
-						console.log(C);
 					}
 					var myChart = new Chart(ctx, {
 						type: 'line',
 						data: {
 							labels: ["A", "B", "C"],
 							datasets: [{
-								label: 'Position',
+								label: '<?php echo ($_GET["name"]); ?>',
 								data: [A, B, C],
-								backgroundColor: [
-								'rgba(255, 99, 132, 0.2)',
-								'rgba(54, 162, 235, 0.2)',
-								'rgba(255, 206, 86, 0.2)',
-								'rgba(75, 192, 192, 0.2)',
-								'rgba(153, 102, 255, 0.2)',
-								'rgba(255, 159, 64, 0.2)'
-								],
-								borderColor: [
-								'rgba(255,99,132,1)',
-								'rgba(54, 162, 235, 1)',
-								'rgba(255, 206, 86, 1)',
-								'rgba(75, 192, 192, 1)',
-								'rgba(153, 102, 255, 1)',
-								'rgba(255, 159, 64, 1)'
-								],
+								backgroundColor: bGroundColor,
+								borderColor: borColor,
 								borderWidth: 1
 							}]
 						},
@@ -255,24 +305,30 @@
 							}
 						}
 					});
-
+					var counter = 1;
+					var xhttp2 = new XMLHttpRequest();
+					setTimeout(AddData, 3000)
+					
 				}
 			};
+
 			xhttp.open("POST", "<?php echo ($_GET["name"] . " Profile.txt"); ?>", true);
 			xhttp.send();
 
-		</script>
+	</script>
 
 	</section>
 
 	<!-- file to load "<?php echo ($_GET["name"] . " Profile.txt"); ?>" -->
 
-</body>
+
 <footer>
 	<h5>&copy; 2018. All rights reserved.</h5> 
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.js"></script>
+
+<!-- <script src = "ChartData.js"></script> -->
 
 </body>
 </html>
