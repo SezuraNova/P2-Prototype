@@ -179,7 +179,7 @@
 
 		<div id="demo">
 			<h4>Look at profile with AJAX</h4>
-			<button type="button" onclick="loadDoc()">Change Content</button>
+			<button type="button" onclick="loadDoc()">Look at Text File</button>
 		</div>
 		
 		<script src="node_modules/chart.js/dist/Chart.bundle.js"> </script>
@@ -198,15 +198,6 @@
 				xhttp.send();
 			}
 
-			// function addData(chart, label, data) {
-			//     // chart.data.labels.push(label);
-			//     chart.data.datasets.forEach((dataset) => {
-			//     	console.log(data);
-			//         dataset.data.push(data);
-			//     });
-			//     // console.log(dataset.data);
-			//     chart.update();
-			// }
 			
 			function addData(){
 					xhttp.onreadystatechange = function(chart) {
@@ -228,29 +219,8 @@
 					xhttp2.send();
 			}
 
-			function matchRuleShort(str, rule) {
-			  return new RegExp("^" + rule.split("*").join(".*") + "$").test(str);
-			}
-
-			//Explanation code
-			function matchRuleExpl(str, rule) {
-			  // "."  => Find a single character, except newline or line terminator
-			  // ".*" => Matches any string that contains zero or more characters
-			  rule = rule.split("*").join(".*");
-
-			  // "^"  => Matches any string with the following at the beginning of it
-			  // "$"  => Matches any string with that in front at the end of it
-			  rule = "^" + rule + "$"
-
-			  //Create a regular expression object for matching string
-			  var regex = new RegExp(rule);
-
-			  //Returns true if it finds a match, otherwise it returns false
-			  return regex.test(str);
-			}
-
 			var ctx = document.getElementById("myChart").getContext('2d');
-			var xhttp = new XMLHttpRequest();
+			
 			//var myChart = new Chart(ctx);
 			var A, B, C;
 			var bGroundColor = [
@@ -269,31 +239,11 @@
 								'rgba(153, 102, 255, 1)',
 								'rgba(255, 159, 64, 1)'
 								];
-			xhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 200) {
-					profileDat = this.responseText;
-					console.log(profileDat);
-					ready = true;
-					if (profileDat.search("A")!= -1){
-						A = profileDat.substring((profileDat.search("A") + 2),(profileDat.search("A") + 5));
-					}						
-					if (profileDat.search("B")!= -1){
-						B = profileDat.substring((profileDat.search("B") + 2),(profileDat.search("B") + 5));
-					}						
-					if (profileDat.search("C")!= -1){
-						C = profileDat.substring((profileDat.search("C") + 2),(profileDat.search("C") + 5));
-					}
-					var myChart = new Chart(ctx, {
+			var myChart = new Chart(ctx, {
 						type: 'line',
 						data: {
 							labels: ["A", "B", "C"],
-							datasets: [{
-								label: '<?php echo ($_GET["name"]); ?>',
-								data: [A, B, C],
-								backgroundColor: bGroundColor,
-								borderColor: borColor,
-								borderWidth: 1
-							}]
+							datasets: [{ }]
 						},
 						options: {
 							scales: {
@@ -305,15 +255,54 @@
 							}
 						}
 					});
-					var counter = 1;
-					var xhttp2 = new XMLHttpRequest();
-					setTimeout(AddData, 3000)
-					
-				}
-			};
+			var xhttp= [];
+			var counter = 1;
+			for (var i = 1; i < 6; i++) {
+				xhttp[i] = new XMLHttpRequest();
+				xhttp[i].onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						profileDat = this.responseText;
+						console.log(profileDat);
+						ready = true;
+						if (profileDat.search("A")!= -1){
+							A = profileDat.substring((profileDat.search("A") + 2),(profileDat.search("A") + 5));
+						}						
+						if (profileDat.search("B")!= -1){
+							B = profileDat.substring((profileDat.search("B") + 2),(profileDat.search("B") + 5));
+						}						
+						if (profileDat.search("C")!= -1){
+							C = profileDat.substring((profileDat.search("C") + 2),(profileDat.search("C") + 5));
+						}
+						if(counter==1)
+							var labelName = '<?php echo ($_GET["name"]); ?>';
+						else
+							var labelName = "Profile " + counter;
+						var newDataset = {
+									label: labelName,
+									data: [A, B, C],
+									backgroundColor: bGroundColor[counter],
+									borderColor: borColor[counter],
+									borderWidth: 1
+								}
+						myChart.data.datasets.push(newDataset);
+					    myChart.update();
+					    counter ++;
+					}
+				};
+				if(i==1)
+					xhttp[i].open("POST", "<?php echo ($_GET["name"] . " Profile.txt"); ?>", true);
+				if(i==2)
+					xhttp[i].open("POST", "<?php echo ("AAA Profile.txt"); ?>", true);
+				if(i==3)
+					xhttp[i].open("POST", "<?php echo ("BBB Profile.txt"); ?>", true);
+				if(i==4)
+					xhttp[i].open("POST", "<?php echo ("CCC Profile.txt"); ?>", true);
+				if(i==5)
+					xhttp[i].open("POST", "<?php echo ("DDD Profile.txt"); ?>", true);
+				xhttp[i].send();
+			}
 
-			xhttp.open("POST", "<?php echo ($_GET["name"] . " Profile.txt"); ?>", true);
-			xhttp.send();
+
 
 	</script>
 

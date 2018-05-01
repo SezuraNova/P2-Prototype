@@ -1,5 +1,5 @@
 VN
-P
-VP
 VN
-VP
+VN
+VN
+VN
